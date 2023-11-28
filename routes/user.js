@@ -19,7 +19,7 @@ router.put("/:id", verifyToken, async (req, res) => {
     if (req.body.password) {
         req.body.password = CryptoJS.AES.encrypt(
             req.body.password,
-            process.env.PASS_SEC
+            'qewretrytufyiguoyt'
         ).toString()
     }
 
@@ -43,6 +43,7 @@ router.delete("/find/:id", verifyToken, async (req, res) => {
 })
 
 router.get("/find/:id", verifyToken, async (req, res) => {
+    console.log(req.headers)
     try {
         const user = await User.findById(req.params.id)
         const { password, ...others } = user._doc
@@ -62,8 +63,10 @@ router.get("/", verifyToken, async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query
         const users = await User.find().limit(limit * 1).skip((page - 1) * limit)
+        console.log(users)
         res.status(200).json({ total: users.length, users })
     } catch (error) {
+        console.log(error)
         res.status(500).json(error)
     }
 })

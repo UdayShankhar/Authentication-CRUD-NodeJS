@@ -1,10 +1,12 @@
 const jwt = require("jsonwebtoken")
 
 const verifyToken = (req, res, next) => {
-    const authHeader = req.headers.token
+    console.log(req.headers)
+    const authHeader = req.headers.token || req.headers.authorization
     if (authHeader) {
         const token = authHeader.split(" ")[1]
-        jwt.verify(token, process.env.JWT_SEC, (err, user) => {
+        console.log(token);
+        jwt.verify(token, 'jbsakjdbiabsdibaskdbaksjdb', (err, user) => {
             if (err) res.status(403).json('Invalid Token')
             req.user = user
             next()

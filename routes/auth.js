@@ -7,7 +7,7 @@ router.post("/register", async (req, res) => {
     const newUser = new User({
         username: req.body.username,
         email: req.body.email,
-        password: CryptoJS.AES.encrypt(req.body.password, process.env.PASS_SEC).toString()
+        password: CryptoJS.AES.encrypt(req.body.password, 'qewretrytufyiguoyt').toString()
     })
     try {
         const savedUser = await newUser.save();
@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
 
         !user && res.status(401).json('Wrong credentials')
 
-        const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC)
+        const hashedPassword = CryptoJS.AES.decrypt(user.password, 'qewretrytufyiguoyt')
         const Originalpassword = hashedPassword.toString(CryptoJS.enc.Utf8)
 
         Originalpassword != req.body.password && res.status(401).json('Wrong credentials')
@@ -33,7 +33,7 @@ router.post("/login", async (req, res) => {
         const accessToken = jwt.sign({
             id: user._id,
             isAdmin: user.isAdmin
-        }, process.env.JWT_SEC, {
+        }, 'jbsakjdbiabsdibaskdbaksjdb', {
             expiresIn: '2d'
         })
 
@@ -42,6 +42,7 @@ router.post("/login", async (req, res) => {
         res.status(200).json({ ...others, accessToken })
 
     } catch (error) {
+        console.log(error);
         res.status(500).send(error)
     }
 
