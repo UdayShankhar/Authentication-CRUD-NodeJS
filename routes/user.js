@@ -1,4 +1,5 @@
 const router = require("express").Router()
+const AddNewUser = require("../models/AddNewUser")
 const User = require("../models/User")
 const {
     verifyToken,
@@ -70,5 +71,71 @@ router.get("/", verifyToken, async (req, res) => {
         res.status(500).json(error)
     }
 })
+
+router.get("/allUsers", verifyToken, async (req, res) => {
+    try {
+        const users = await AddNewUser.find();
+        const usersWithoutPassword = users.map(user => {
+            const { password, ...userWithoutPassword } = user._doc;
+            return userWithoutPassword;
+        });
+
+        res.status(200).json({ total: usersWithoutPassword.length, users: usersWithoutPassword });
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+router.post("/addUser", verifyToken, async (req, res) => {
+    try {
+        if (req.body.password) {
+            req.body.password = CryptoJS.AES.encrypt(
+                req.body.password,
+                'qewretrytufyiguoyt'
+            ).toString();
+        }
+
+        const newUser = new AddNewUser(req.body);
+
+        const savedUser = await newUser.save();
+
+        const { password, ...userWithoutPassword } = savedUser._doc;
+
+        res.status(201).json(userWithoutPassword);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+router.put("/edit/:id", verifyToken, async (req, res) => {
+    try {
+        if (req.body.password) {
+            req.body.password = CryptoJS.AES.encrypt(
+                req.body.password,
+                'qewretrytufyiguoyt'
+            ).toString();
+        }
+
+        const updatedUser = await AddNewUser.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    name: req.body.name,
+                    phoneNumber: req.body.phoneNumber,
+                    address: req.body.address,
+                    state: req.body.state,
+                    city: req.body.city,
+                },
+            },
+            { new: true }
+        );
+
+        const { password, ...userWithoutPassword } = updatedUser._doc;
+
+        res.status(200).json(userWithoutPassword);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
 
 module.exports = router
