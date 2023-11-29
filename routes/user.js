@@ -55,6 +55,21 @@ router.post("/addUser", verifyToken, async (req, res) => {
 
 router.put("/edit/:id", verifyToken, async (req, res) => {
   try {
+    const existingUser = await AddNewUser.findOne({
+      $or: [
+        { name: req.body.name, _id: { $ne: req.params.id } },
+        { phoneNumber: req.body.phoneNumber, _id: { $ne: req.params.id } },
+      ],
+    });
+
+    if (existingUser) {
+      return res.status(400).json({
+        message: existingUser.name === req.body.name
+          ? "Name is already taken"
+          : "Phone number is already taken",
+      });
+    }
+
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(
         req.body.password,
@@ -90,6 +105,7 @@ router.put("/edit/:id", verifyToken, async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 
 router.delete("/delete/:id", verifyToken, async (req, res) => {
   try {
