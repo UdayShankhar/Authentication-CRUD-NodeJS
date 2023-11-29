@@ -24,7 +24,7 @@ router.post("/addUser", verifyToken, async (req, res) => {
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(
         req.body.password,
-        "qewretrytufyiguoyt"
+        process.env.CRYPTO_SECRET_KEY
       ).toString();
     }
 
@@ -73,7 +73,7 @@ router.put("/edit/:id", verifyToken, async (req, res) => {
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(
         req.body.password,
-        "qewretrytufyiguoyt"
+        process.env.CRYPTO_SECRET_KEY
       ).toString();
     }
 
