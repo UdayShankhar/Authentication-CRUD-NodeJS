@@ -17,14 +17,14 @@ router.post("/login", async (req, res) => {
       {
         username: "ColanInfotech",
       },
-      "jbsakjdbiabsdibaskdbaksjdb",
+      process.env.JWT_SECRET_KEY,
       {
         expiresIn: "2d",
       }
     );
     res.status(200).json({ username: "ColanInfotech", accessToken });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send(error);
   }
 });

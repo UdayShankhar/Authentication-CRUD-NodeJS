@@ -10,7 +10,7 @@ const port = process.env.PORT || 8000
 
 dotenv.config();
 
-mongoose.connect(process.env.mongoURL)
+mongoose.connect(process.env.MONGOURL)
     .then(() => {
         console.log('DB connection successful');
     }).catch((err) => {
